@@ -2,6 +2,7 @@ package com.home.ecommerce.Domain;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 public class Role {
@@ -11,5 +12,12 @@ public class Role {
     private Long id;
     private String role;
     @ManyToMany(mappedBy = "roles")
-    private Collection<User> users;
+    private List< User > users;
+
+    public Role(String role) {
+        this.role = role;
+    }
+
+    public Role() {
+    }
 }
