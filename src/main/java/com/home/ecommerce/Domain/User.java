@@ -1,6 +1,7 @@
 package com.home.ecommerce.Domain;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
@@ -8,6 +9,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -77,7 +79,13 @@ public class User implements UserDetails{
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        List<String> roles = Arrays.asList(this.role.split(","));
+        roles.forEach(r -> {
+            GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(r);
+            authorities.add(grantedAuthority);
+        });
+        return authorities;
     }
 
     @Override

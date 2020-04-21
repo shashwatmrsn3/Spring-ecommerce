@@ -7,6 +7,7 @@ import com.home.ecommerce.Exception.UserAlreadyExistsException;
 import com.home.ecommerce.Repositroy.RoleRepository;
 import com.home.ecommerce.Repositroy.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,6 +20,8 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public User registerUser (User user){
         User user1 = userRepository.findByEmail(user.getEmail());
@@ -31,6 +34,7 @@ public class UserService {
         List<Role> roles = new ArrayList<>();
         roles.add(role);
         user.setRoles(roles);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 }
