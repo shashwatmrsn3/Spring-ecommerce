@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-public class User implements UserDetails{
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -29,12 +29,9 @@ public class User implements UserDetails{
     @Size(min=6)
     private String password;
     private String role;
-    @ManyToMany(cascade=CascadeType.MERGE)
-    @JoinTable(
-            name="user_role",
-            joinColumns={@JoinColumn(name="USER_ID", referencedColumnName="ID")},
-            inverseJoinColumns={@JoinColumn(name="ROLE_ID", referencedColumnName="ID")})
-    private List<Role> roles;
+    private boolean active;
+
+
 
     public Long getId() {
         return id;
@@ -60,7 +57,7 @@ public class User implements UserDetails{
         this.email = email;
     }
 
-    @Override
+
     public String getPassword() {
         return password;
     }
@@ -69,15 +66,9 @@ public class User implements UserDetails{
         this.password = password;
     }
 
-    public List<Role> getRoles() {
-        return roles;
-    }
 
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
-    }
 
-    @Override
+
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
         List<String> roles = Arrays.asList(this.role.split(","));
@@ -88,29 +79,29 @@ public class User implements UserDetails{
         return authorities;
     }
 
-    @Override
+
     public String getUsername() {
-        return null;
+        return email;
     }
 
-    @Override
+
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
-    @Override
+
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
-    @Override
+
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
-    @Override
+
     public boolean isEnabled() {
-        return false;
+        return active;
     }
 
     public String getRole() {
@@ -119,5 +110,13 @@ public class User implements UserDetails{
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

@@ -1,5 +1,6 @@
 package com.home.ecommerce.Service;
 
+import com.home.ecommerce.Domain.MyUserDetails;
 import com.home.ecommerce.Domain.User;
 import com.home.ecommerce.Repositroy.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,10 @@ public class MyUserDetailsService implements UserDetailsService {
     private UserRepository userRepository;
 
     @Override
-    public User loadUserByUsername(String s) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(s);
-        return  user;
+        if(user==null) System.out.println("username doesnt exist");
+        MyUserDetails userDetails = new MyUserDetails(user);
+        return userDetails;
     }
 }

@@ -26,15 +26,19 @@ public class UserService {
     public User registerUser (User user){
         User user1 = userRepository.findByEmail(user.getEmail());
         if(user1 != null) throw new UserAlreadyExistsException("User with email already exists");
+        user.setActive(true);
         String roleName = user.getRole();
         Role role = roleRepository.findByRole(roleName);
         if(role==null){
             throw new RoleNotFoundException("Role doesnt exist");
         }
-        List<Role> roles = new ArrayList<>();
-        roles.add(role);
-        user.setRoles(roles);
+
+        user.setRole(user.getRole());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
+    }
+
+    public User loadUserByUsername(String username){
+        return userRepository.findByEmail(username);
     }
 }
