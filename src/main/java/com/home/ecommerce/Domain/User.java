@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,10 +29,21 @@ public class User {
     @NotBlank(message = "Please enter a password")
     @Size(min=6)
     private String password;
+    @NotNull
     private String role;
     private boolean active;
 
+    @OneToOne(mappedBy = "vendorAdmin")
+    @JoinColumn(nullable = true)
+    private Vendor vendor;
 
+    public Vendor getVendor() {
+        return vendor;
+    }
+
+    public void setVendor(Vendor vendor) {
+        this.vendor = vendor;
+    }
 
     public Long getId() {
         return id;

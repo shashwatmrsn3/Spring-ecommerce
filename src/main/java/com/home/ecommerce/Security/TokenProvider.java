@@ -17,13 +17,13 @@ public class TokenProvider {
     public String generateToken(Authentication authentication){
         UserDetails user = (UserDetails)authentication.getPrincipal();
         Date now = new Date(System.currentTimeMillis());
-        Date expiryDate = new Date(now.getTime()+30_0000);
+        Date expiryDate = new Date(now.getTime()+30_00000);
 
         String email = user.getUsername();
         Map<String,Object> claims = new HashMap<>();
 
         claims.put("email",email);
-        claims.put("id",email);
+
         String jwt = Jwts.builder().setSubject(email).
                 addClaims(claims).
                 setExpiration(expiryDate).
@@ -35,10 +35,13 @@ public class TokenProvider {
     public boolean validateToken(String token){
         try{
             Jwts.parser().setSigningKey("SECRET_KEY").parseClaimsJws(token);
+            System.out.println("token valid");
+
             return true;
         }catch(Exception e){
             System.out.println(e);
         }
+        System.out.println("token invalid");
         return false;
     }
 

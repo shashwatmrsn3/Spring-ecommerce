@@ -19,4 +19,22 @@ public class CustomExceptionHandler  extends ResponseEntityExceptionHandler{
         RoleNotFoundExceptionResponse response = new RoleNotFoundExceptionResponse(ex.getMessage());
         return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler
+    public ResponseEntity<?> multipleVendorPerUserExceptionHandler(MultipleVendorPerUserException ex){
+        MultipleVendorPerUserExceptionRsponse response = new MultipleVendorPerUserExceptionRsponse(ex.getMessage());
+        return new ResponseEntity<MultipleVendorPerUserExceptionRsponse>(response,HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<?> productNotFoundException(ProductNotFoundException ex){
+        ProductNotFoundExceptionResponse response = new ProductNotFoundExceptionResponse(ex.getMessage());
+        return new ResponseEntity<ProductNotFoundExceptionResponse>(response,HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public  ResponseEntity<?> unauthorizedExceptionHandler(UnauthorizedException ex){
+        UnauthorizedExceptionResponse response = new UnauthorizedExceptionResponse(ex.getMessage());
+        return new ResponseEntity<UnauthorizedExceptionResponse>(response,HttpStatus.UNAUTHORIZED);
+    }
 }

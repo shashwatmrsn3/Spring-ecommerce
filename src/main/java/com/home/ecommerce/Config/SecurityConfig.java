@@ -1,5 +1,6 @@
 package com.home.ecommerce.Config;
 
+import com.home.ecommerce.Security.SecurityFilter;
 import com.home.ecommerce.Service.MyUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -22,6 +24,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Bean
+    public SecurityFilter jwtAuthenticationFilter(){return new SecurityFilter();}
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -47,8 +51,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.css",
                         "/**/*.jpg",
                         "/api/user/register"
-                ).permitAll().antMatchers(HttpMethod.POST,"/api/user/login").permitAll()
+                ).permitAll().antMatchers("/api/product/*").hasRole("VENDOR")
+                .antMatchers("/api/vendor/*").hasAnyRole("VENDOR","CUSTOMER")
+                .antMatchers(HttpMethod.POST,"/api/user/login").permitAll()
                 ;
+        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+
 
     }
 
