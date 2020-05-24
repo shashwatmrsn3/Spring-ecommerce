@@ -1,5 +1,8 @@
 package com.home.ecommerce.Domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -20,7 +23,7 @@ public class Vendor {
 
     @OneToOne
     private User vendorAdmin;
-
+    @JsonManagedReference
     @OneToMany(mappedBy = "vendor")
     private List<Product> products;
 

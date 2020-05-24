@@ -1,5 +1,7 @@
 package com.home.ecommerce.Domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -22,6 +24,7 @@ public class Product {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     private Vendor vendor;
 
     public int getId() {
