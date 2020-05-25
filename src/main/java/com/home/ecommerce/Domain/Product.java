@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Entity
 public class Product {
@@ -26,6 +27,9 @@ public class Product {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonBackReference
     private Vendor vendor;
+
+    @OneToMany
+    private List<Comment> comments;
 
     public int getId() {
         return id;
@@ -73,5 +77,13 @@ public class Product {
 
     public void setVendor(Vendor vendor) {
         this.vendor = vendor;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 }

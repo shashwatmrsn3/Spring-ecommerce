@@ -1,9 +1,6 @@
 package com.home.ecommerce.Controller;
 
-import com.home.ecommerce.Domain.MyUserDetails;
-import com.home.ecommerce.Domain.Product;
-import com.home.ecommerce.Domain.User;
-import com.home.ecommerce.Domain.Vendor;
+import com.home.ecommerce.Domain.*;
 import com.home.ecommerce.Exception.ProductNotFoundException;
 import com.home.ecommerce.Exception.UnauthorizedException;
 import com.home.ecommerce.Service.*;
@@ -31,6 +28,8 @@ public class ProductController {
     private PrincipalService principalService;
     @Autowired
     private VendorService vendorService;
+    @Autowired
+    private CommentService commentService;
 
     @PostMapping("/addProduct")
     public ResponseEntity<?> addProduct(@RequestBody Product product, BindingResult result){
@@ -73,5 +72,20 @@ public class ProductController {
         Vendor vendor = vendorService.getVendorByUser(user);
         List<Product> products = productService.getAllProductsByVendor(vendor);
         return new ResponseEntity<>(products,HttpStatus.OK);
+    }
+
+    @PostMapping("/answerquestion/{pid}/{cid}")
+    public ResponseEntity<?> answerquestion(@RequestBody Comment comment,@PathVariable("pid") int productId,@PathVariable("cid") int commentId){
+        Product product = productService.findProductById(productId);
+        if(product==null) throw new ProductNotFoundException("Requested product was not found");
+        if(product.getVendor().getVendorAdmin()!=principalService.getCurrentPrincipal()) {
+            throw new UnauthorizedException("You are not permitted to preform this operation");
+        }
+        Comment comment1 = commentService.findById(commentId);
+        if(comment1 == null) throw new ProductNotFoundException("The requested comment was not found");
+        comment1.setAnswer(comment.getAnswer());
+        Comment savedComment = commentService.saveComment(comment1);
+        return new ResponseEntity<Comment>(savedComment,HttpStatus.OK);
+
     }
 }

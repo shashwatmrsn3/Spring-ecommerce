@@ -1,12 +1,16 @@
 package com.home.ecommerce.Controller;
 
+import com.home.ecommerce.Domain.Comment;
+import com.home.ecommerce.Domain.Product;
+import com.home.ecommerce.Domain.Question;
 import com.home.ecommerce.Domain.User;
+import com.home.ecommerce.Exception.ProductNotFoundException;
+import com.home.ecommerce.Exception.UnauthorizedException;
+import com.home.ecommerce.Repositroy.CommentRepository;
 import com.home.ecommerce.Security.LoginRequest;
 import com.home.ecommerce.Security.LoginSuccessResponse;
 import com.home.ecommerce.Security.TokenProvider;
-import com.home.ecommerce.Service.MyUserDetailsService;
-import com.home.ecommerce.Service.UserService;
-import com.home.ecommerce.Service.ValidationErrorService;
+import com.home.ecommerce.Service.*;
 import jdk.nashorn.internal.parser.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,6 +40,12 @@ public class UserController {
     private TokenProvider tokenProvider;
     @Autowired
     private MyUserDetailsService userDetailsService;
+    @Autowired
+    private PrincipalService principalService;
+    @Autowired
+    private ProductService productService;
+    @Autowired
+    private CommentService commentService;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody  User user, BindingResult result){
@@ -65,9 +75,21 @@ public class UserController {
         return new ResponseEntity<LoginSuccessResponse>(new LoginSuccessResponse(true,jwt),HttpStatus.OK);
     }
 
-    @GetMapping("/dashboard")
-    public String welcome(){
-        return "welcome";
+    @PostMapping("/askquestion/{pid}")
+    public ResponseEntity<?> comment(@RequestBody Question question,BindingResult result,@PathVariable("pid") int id){
+        System.out.println("Product id"+id);
+        ResponseEntity<?> errorMap = validationErrorService.validationErrorService(result);
+        if(errorMap!=null) return errorMap;
+        User user = principalService.getCurrentPrincipal();
+        Product product = productService.findProductById(id);
+        if(product==null) throw new ProductNotFoundException("Requested product is not found");
+        if(product.getVendor().getVendorAdmin()==user) throw new UnauthorizedException("You are not allowed to ask question on your own product as a vendor");
+        Comment comment = new Comment();
+        comment.setQuestion(question.getQuestion());
+        comment.setProduct(product);
+        Comment  comment1 = commentService.saveComment(comment);
+        return new ResponseEntity<Comment>(comment1,HttpStatus.CREATED);
+
     }
 
 
