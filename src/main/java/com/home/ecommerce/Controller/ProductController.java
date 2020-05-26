@@ -88,4 +88,11 @@ public class ProductController {
         return new ResponseEntity<Comment>(savedComment,HttpStatus.OK);
 
     }
+
+    @GetMapping("/details/{pid}")
+    public ResponseEntity<?> getProductDetails(@PathVariable("pid") int id){
+        Product product = productService.findProductById(id);
+        if(product==null) throw new ProductNotFoundException("Requested product was not found");
+        return new ResponseEntity<Product>(product,HttpStatus.OK);
+    }
 }

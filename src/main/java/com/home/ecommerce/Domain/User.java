@@ -38,6 +38,9 @@ public class User {
     @JoinColumn(nullable = true)
     private Vendor vendor;
 
+    @OneToOne
+    private Cart cart;
+
     public Vendor getVendor() {
         return vendor;
     }

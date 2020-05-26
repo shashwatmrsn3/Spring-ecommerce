@@ -31,6 +31,8 @@ public class Product {
     @OneToMany
     private List<Comment> comments;
 
+
+
     public int getId() {
         return id;
     }
