@@ -36,4 +36,8 @@ public class ProductService {
     public List<Product> getAllProductsByVendor(Vendor vendor){
         return productRepository.getAllByVendor(vendor);
     }
+
+    public void updateStockOnProduct(Product product){
+        productRepository.save(product);
+    }
 }

@@ -20,7 +20,6 @@ public class Product {
     private float price;
     @NotNull
     private int stock;
-    @NotNull
 
 
     @NotNull
