@@ -10,11 +10,15 @@ public class OrderRequest {
     @NotBlank(message="Order IDs cannot be null")
     private String orderIdsString;
     private String[] orderIdsStringArray = new String[10];
-    @NotBlank(message = "Quantities cannot be null3")
+    @NotBlank(message = "Quantities cannot be null")
     private String quantitiesString;
     private String[] quantitiesStringArray = new String[10];
     private List<Integer> orderIdList = new ArrayList<>();
     private List<Integer> quantityList = new ArrayList<>();
+    @NotBlank(message = "Shipping address cannot be blank")
+    private String addressString;
+    private Address address;
+
 
     public String getOrderIdsString() {
         return orderIdsString;
@@ -48,10 +52,26 @@ public class OrderRequest {
         this.quantitiesStringArray = quantitiesStringArray;
     }
 
+    public String getAddressString() {
+        return addressString;
+    }
 
+    public void setAddressString(String addressString) {
+        this.addressString = addressString;
+    }
 
+    public Address getAddress() {
+        address = new Address();
+        String[] addressArray = addressString.split(",");
+        address.setProvince(addressArray[0]);
+        address.setCity(addressArray[1]);
+        address.setStreet(addressArray[2]);
+        return  address;
+    }
 
-
+    public void setAddress(Address address) {
+        this.address = address;
+    }
 
     public List<Integer> getOrderIdList() {
         orderIdsStringArray = orderIdsString.split(",");

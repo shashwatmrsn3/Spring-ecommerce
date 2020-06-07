@@ -41,6 +41,37 @@ public class User {
     @OneToOne
     private Cart cart;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<Rating> rating;
+
+    @OneToMany(mappedBy = "user")
+    private List<Orders> orders;
+
+    public Cart getCart() {
+        return cart;
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
+    }
+
+    public List<Rating> getRating() {
+        return rating;
+    }
+
+    public void setRating(List<Rating> rating) {
+        this.rating = rating;
+    }
+
+    public List<Orders> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Orders> orders) {
+        this.orders = orders;
+    }
+
     public Vendor getVendor() {
         return vendor;
     }

@@ -1,6 +1,7 @@
 package com.home.ecommerce.Domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -30,7 +31,17 @@ public class Product {
     @OneToMany
     private List<Comment> comments;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "product")
+    private List<Rating> rating;
 
+    public List<Rating> getRating() {
+        return rating;
+    }
+
+    public void setRating(List<Rating> rating) {
+        this.rating = rating;
+    }
 
     public int getId() {
         return id;

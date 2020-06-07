@@ -16,7 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.xml.ws.Response;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -43,7 +46,8 @@ public class OrderController {
 //        ResponseEntity<?> errorMap = validationErrorService.validationErrorService(result);
 //        if(result!=null) return errorMap;
         System.out.println("after error map");
-
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        Date date = new Date();
         Orders order = new Orders();
         float amount = 0.0f;
         List<OrderItem> orderItems = new ArrayList<>();
@@ -63,6 +67,9 @@ public class OrderController {
             productService.updateStockOnProduct(product);
         }
         order.setOrderItems(orderItems);
+        order.setAddress(orderRequest.getAddress());
+        order.setDate(date);
+        order.setStatus("PROCESSING");
         order.setAmount(amount);
         User user = principalService.getCurrentPrincipal();
         order.setUser(user);
