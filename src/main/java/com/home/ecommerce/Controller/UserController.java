@@ -72,7 +72,7 @@ public class UserController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwt = tokenProvider.generateToken(authentication);
-        return new ResponseEntity<LoginSuccessResponse>(new LoginSuccessResponse(true,jwt),HttpStatus.OK);
+        return new ResponseEntity<LoginSuccessResponse>(new LoginSuccessResponse(true,jwt,user.getRole()),HttpStatus.OK);
     }
 
     @PostMapping("/askquestion/{pid}")

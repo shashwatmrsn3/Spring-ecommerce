@@ -4,15 +4,22 @@ import com.home.ecommerce.Domain.*;
 import com.home.ecommerce.Exception.ProductNotFoundException;
 import com.home.ecommerce.Exception.UnauthorizedException;
 import com.home.ecommerce.Service.*;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/product")
@@ -30,14 +37,32 @@ public class ProductController {
     private VendorService vendorService;
     @Autowired
     private CommentService commentService;
+    private static String imageDirectory = System.getProperty("user.dir") + "/images/";
 
-    @PostMapping("/addProduct")
-    public ResponseEntity<?> addProduct(@RequestBody Product product, BindingResult result){
-        ResponseEntity<?> errorMap = errorService.validationErrorService(result);
-        if(errorMap != null) return errorMap;
+    @PostMapping(value = "/addProduct")
+    public ResponseEntity<?> addProduct(@RequestParam("image") MultipartFile image, @RequestParam("description") String description,@RequestParam("name") String name,@RequestParam("price") float price,@RequestParam("stock") int stock) throws Exception{
+       // ResponseEntity<?> errorMap = errorService.validationErrorService(result);
+      //  if(errorMap != null) return errorMap;
+        Path fileNamePath = Paths.get(imageDirectory, UUID.randomUUID()+"."+ FilenameUtils.getExtension(image.getOriginalFilename()));
+        try{
+            Files.write(fileNamePath,image.getBytes());
+        }catch(Exception e){
+            System.out.println(e);
+        }
+        Product product = new Product();
+        product.setImagePath(fileNamePath.toString());
+        product.setStock(stock);
+        product.setDescription(description);
+        product.setPrice(price);
+        product.setName(name);
+        CustomFile customFile = new CustomFile();
+        customFile.setBytes(image.getBytes());
+        customFile.setFileType(FilenameUtils.getExtension(image.getOriginalFilename()));
+        product.setCustomImageFile(customFile);
 
         User user = principalService.getCurrentPrincipal();
         Product product1 = productService.saveProduct(product,user);
+        product1.setImagePath(null);
         return  new ResponseEntity<Product>(product1, HttpStatus.CREATED);
     }
 
@@ -71,6 +96,7 @@ public class ProductController {
         User user = principalService.getCurrentPrincipal();
         Vendor vendor = vendorService.getVendorByUser(user);
         List<Product> products = productService.getAllProductsByVendor(vendor);
+        
         return new ResponseEntity<>(products,HttpStatus.OK);
     }
 

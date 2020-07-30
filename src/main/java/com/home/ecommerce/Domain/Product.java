@@ -2,6 +2,9 @@ package com.home.ecommerce.Domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -34,6 +37,39 @@ public class Product {
     @JsonIgnore
     @OneToMany(mappedBy = "product")
     private List<Rating> rating;
+
+
+    private String imagePath;
+
+    @Transient
+    private MultipartFile imageFile;
+
+    @Transient
+    private CustomFile customImageFile;
+
+    public CustomFile getCustomImageFile() {
+        return customImageFile;
+    }
+
+    public void setCustomImageFile(CustomFile customImageFile) {
+        this.customImageFile = customImageFile;
+    }
+
+    public MultipartFile getImageFile() {
+        return imageFile;
+    }
+
+    public void setImageFile(MultipartFile imageFile) {
+        this.imageFile = imageFile;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
 
     public List<Rating> getRating() {
         return rating;
