@@ -15,9 +15,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -92,11 +94,30 @@ public class ProductController {
     }
 
     @GetMapping("/products")
-    public ResponseEntity<?> getAllProducts(){
+    public ResponseEntity<?> getAllProducts() throws Exception{
         User user = principalService.getCurrentPrincipal();
         Vendor vendor = vendorService.getVendorByUser(user);
         List<Product> products = productService.getAllProductsByVendor(vendor);
-        
+        for(int i=0;i<products.size();i++){
+            Product product = products.get(i);
+            System.out.println("1");
+            String path = product.getImagePath();
+            System.out.println("2");
+            CustomFile customFile = new CustomFile();
+            System.out.println("3");
+            File check = null;
+            if(path!=null) check = new File(path);
+            if(path!=null && check.exists()) {
+                customFile.setBytes(Files.readAllBytes(Paths.get(path)));
+
+                System.out.println("4");
+
+                customFile.setFileType(FilenameUtils.getExtension(path));
+                System.out.println(5);
+                product.setCustomImageFile(customFile);
+            }
+
+        }
         return new ResponseEntity<>(products,HttpStatus.OK);
     }
 
