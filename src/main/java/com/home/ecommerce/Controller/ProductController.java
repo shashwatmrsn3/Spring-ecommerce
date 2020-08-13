@@ -15,6 +15,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -69,14 +71,32 @@ public class ProductController {
     }
 
     @PostMapping("/update")
-    public ResponseEntity<?> updateProduct(@RequestBody Product product,BindingResult result){
-        ResponseEntity<?> errorMap = errorService.validationErrorService(result);
-        if(errorMap!=null) return errorMap;
-        Product product1 = productService.findProductById(product.getId());
+    public ResponseEntity<?> updateProduct(@RequestParam("id") @NotNull int id,@RequestParam(value = "image",required = false) MultipartFile image, @RequestParam("name") @NotBlank  String name, @RequestParam("description") @NotBlank String description, @RequestParam("price") @NotNull float price,@RequestParam("stock") @NotNull int stock){
+        Product product = new Product();
+        Product product1 = productService.findProductById(id);
         if(product1==null) throw new ProductNotFoundException("The required product was not found");
         if(product1.getVendor().getVendorAdmin()!=principalService.getCurrentPrincipal()) {
             throw new UnauthorizedException("You are not permitted to preform this operation");
         }
+        product.setName(name);
+        product.setId(id);
+        product.setDescription(description);
+        product.setPrice(price);
+        product.setStock(stock);
+        if(image==null){
+            product.setCustomImageFile(product1.getCustomImageFile());
+            product.setImagePath(product1.getImagePath());
+        }else if(image != null) {
+            Path fileNamePath = Paths.get(imageDirectory, UUID.randomUUID()+"."+ FilenameUtils.getExtension(image.getOriginalFilename()));
+            try{
+                Files.write(fileNamePath,image.getBytes());
+            }catch(Exception e){
+                System.out.println(e);
+            }
+            product.setImagePath(fileNamePath.toString());
+        }
+        product.setComments(product1.getComments());
+        product.setRating(product1.getRating());
         Product updatedProduct = productService.saveProduct(product,principalService.getCurrentPrincipal());
         return new ResponseEntity<Product>(updatedProduct,HttpStatus.OK);
     }
