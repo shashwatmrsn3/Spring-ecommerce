@@ -3,6 +3,7 @@ package com.home.ecommerce.Controller;
 import com.home.ecommerce.Domain.*;
 import com.home.ecommerce.Exception.ProductNotFoundException;
 import com.home.ecommerce.Exception.UnauthorizedException;
+import com.home.ecommerce.Repositroy.ProductRepository;
 import com.home.ecommerce.Service.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -42,6 +43,9 @@ public class ProductController {
     private VendorService vendorService;
     @Autowired
     private CommentService commentService;
+    @Autowired
+    private ProductRepository productRepository;
+
     private static String imageDirectory = System.getProperty("user.dir") + "/images/";
 
     @PostMapping(value = "/addProduct")
@@ -174,5 +178,24 @@ public class ProductController {
         Product product = productService.findProductById(id);
         if(product==null) throw new ProductNotFoundException("Requested product was not found");
         return new ResponseEntity<Product>(product,HttpStatus.OK);
+    }
+
+    @GetMapping("/allproducts")
+    public ResponseEntity<?> getProducts() throws Exception {
+        List<Product> products = productRepository.findAll();
+        for (int i = 0; i < products.size(); i++) {
+            Product product = products.get(i);
+            String path = product.getImagePath();
+            CustomFile customFile = new CustomFile();
+            File check = null;
+            if (path != null) check = new File(path);
+            if (path != null && check.exists()) {
+                customFile.setBytes(Files.readAllBytes(Paths.get(path)));
+                customFile.setFileType(FilenameUtils.getExtension(path));
+                product.setCustomImageFile(customFile);
+            }
+
+        }
+        return new ResponseEntity<>(products, HttpStatus.OK);
     }
 }

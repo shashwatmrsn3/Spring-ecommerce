@@ -16,4 +16,6 @@ public interface ProductRepository extends CrudRepository<Product,Integer> {
     void deleteById(int id);
 
     List<Product> getAllByVendor(Vendor vendor);
+
+    List<Product> findAll();
 }
