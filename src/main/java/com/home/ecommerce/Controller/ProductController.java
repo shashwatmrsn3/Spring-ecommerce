@@ -4,6 +4,7 @@ import com.home.ecommerce.Domain.*;
 import com.home.ecommerce.Exception.ProductNotFoundException;
 import com.home.ecommerce.Exception.UnauthorizedException;
 import com.home.ecommerce.Service.*;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -71,7 +72,7 @@ public class ProductController {
     }
 
     @PostMapping("/update")
-    public ResponseEntity<?> updateProduct(@RequestParam("id") @NotNull int id,@RequestParam(value = "image",required = false) MultipartFile image, @RequestParam("name") @NotBlank  String name, @RequestParam("description") @NotBlank String description, @RequestParam("price") @NotNull float price,@RequestParam("stock") @NotNull int stock){
+    public ResponseEntity<?> updateProduct(@RequestParam("id") @NotNull int id,@RequestParam(value = "image",required = false) MultipartFile image, @RequestParam("name") @NotBlank  String name, @RequestParam("description") @NotBlank String description, @RequestParam("price") @NotNull float price,@RequestParam("stock") @NotNull int stock)throws Exception{
         Product product = new Product();
         Product product1 = productService.findProductById(id);
         if(product1==null) throw new ProductNotFoundException("The required product was not found");
@@ -83,9 +84,13 @@ public class ProductController {
         product.setDescription(description);
         product.setPrice(price);
         product.setStock(stock);
+        CustomFile customFile = new CustomFile();
         if(image==null){
-            product.setCustomImageFile(product1.getCustomImageFile());
+
             product.setImagePath(product1.getImagePath());
+            File f = new File(product1.getImagePath());
+            customFile.setBytes(FileUtils.readFileToByteArray(f));
+            customFile.setFileType(FilenameUtils.getExtension(product1.getImagePath()));
         }else if(image != null) {
             Path fileNamePath = Paths.get(imageDirectory, UUID.randomUUID()+"."+ FilenameUtils.getExtension(image.getOriginalFilename()));
             try{
@@ -94,10 +99,18 @@ public class ProductController {
                 System.out.println(e);
             }
             product.setImagePath(fileNamePath.toString());
+            try{
+                customFile.setBytes(image.getBytes());
+                customFile.setFileType(FilenameUtils.getExtension(image.getOriginalFilename()));
+            }catch(Exception e){
+                System.out.println(e);
+            }
         }
+
         product.setComments(product1.getComments());
         product.setRating(product1.getRating());
         Product updatedProduct = productService.saveProduct(product,principalService.getCurrentPrincipal());
+        updatedProduct.setCustomImageFile(customFile);
         return new ResponseEntity<Product>(updatedProduct,HttpStatus.OK);
     }
 
