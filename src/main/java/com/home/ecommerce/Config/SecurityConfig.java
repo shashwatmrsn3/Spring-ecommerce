@@ -53,7 +53,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.jpg",
                         "/api/user/register",
                         "/api/user/login",
-                        "/api/product/details/"
+                        "/api/product/details/",
+                        "/api/product/allproducts",
+                        "/getimage/{id}"
                 ).permitAll().antMatchers("/api/product/*").hasRole("VENDOR")
                 .antMatchers("/api/vendor/*").hasAnyRole("VENDOR","CUSTOMER")
                 .antMatchers("/api/user/*").hasAnyRole("VENDOR","CUSTOMER")

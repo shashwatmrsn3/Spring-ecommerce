@@ -65,13 +65,13 @@ public class ProductController {
         product.setPrice(price);
         product.setName(name);
         CustomFile customFile = new CustomFile();
-        customFile.setBytes(image.getBytes());
-        customFile.setFileType(FilenameUtils.getExtension(image.getOriginalFilename()));
-        product.setCustomImageFile(customFile);
+
+
+
 
         User user = principalService.getCurrentPrincipal();
         Product product1 = productService.saveProduct(product,user);
-        product1.setImagePath(null);
+
         return  new ResponseEntity<Product>(product1, HttpStatus.CREATED);
     }
 
@@ -104,8 +104,7 @@ public class ProductController {
             }
             product.setImagePath(fileNamePath.toString());
             try{
-                customFile.setBytes(image.getBytes());
-                customFile.setFileType(FilenameUtils.getExtension(image.getOriginalFilename()));
+
             }catch(Exception e){
                 System.out.println(e);
             }
@@ -114,7 +113,7 @@ public class ProductController {
         product.setComments(product1.getComments());
         product.setRating(product1.getRating());
         Product updatedProduct = productService.saveProduct(product,principalService.getCurrentPrincipal());
-        updatedProduct.setCustomImageFile(customFile);
+        updatedProduct.setImagePath("");
         return new ResponseEntity<Product>(updatedProduct,HttpStatus.OK);
     }
 
