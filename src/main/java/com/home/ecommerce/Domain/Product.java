@@ -38,7 +38,7 @@ public class Product {
     @OneToMany(mappedBy = "product")
     private List<Rating> rating;
 
-
+    private String category;
     private String imagePath;
 
     @Transient
@@ -133,5 +133,13 @@ public class Product {
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

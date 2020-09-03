@@ -5,12 +5,24 @@ public class LoginSuccessResponse {
     private  boolean success;
     private String jwt;
     private String role;
+    private Long id;
 
-    public LoginSuccessResponse(boolean success,String jwt,String role){
+    public Long getId() {
+        return id;
+    }
+
+    public LoginSuccessResponse(boolean success, String jwt, String role, Long id) {
         this.success = success;
         this.jwt = jwt;
-        this.role =role;
+        this.role = role;
+        this.id = id;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+
 
     public String getRole() {
         return role;

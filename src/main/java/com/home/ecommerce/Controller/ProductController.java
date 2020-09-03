@@ -49,7 +49,7 @@ public class ProductController {
     private static String imageDirectory = System.getProperty("user.dir") + "/images/";
 
     @PostMapping(value = "/addProduct")
-    public ResponseEntity<?> addProduct(@RequestParam("image") MultipartFile image, @RequestParam("description") String description,@RequestParam("name") String name,@RequestParam("price") float price,@RequestParam("stock") int stock) throws Exception{
+    public ResponseEntity<?> addProduct(@RequestParam("image") MultipartFile image, @RequestParam("description") String description,@RequestParam("name") String name,@RequestParam("price") float price,@RequestParam("stock") int stock,@RequestParam("category") String category) throws Exception{
        // ResponseEntity<?> errorMap = errorService.validationErrorService(result);
       //  if(errorMap != null) return errorMap;
         Path fileNamePath = Paths.get(imageDirectory, UUID.randomUUID()+"."+ FilenameUtils.getExtension(image.getOriginalFilename()));
@@ -64,6 +64,7 @@ public class ProductController {
         product.setDescription(description);
         product.setPrice(price);
         product.setName(name);
+        product.setCategory(category);
         CustomFile customFile = new CustomFile();
 
 
@@ -88,6 +89,7 @@ public class ProductController {
         product.setDescription(description);
         product.setPrice(price);
         product.setStock(stock);
+        product.setCategory(product1.getCategory());
         CustomFile customFile = new CustomFile();
         if(image==null){
 

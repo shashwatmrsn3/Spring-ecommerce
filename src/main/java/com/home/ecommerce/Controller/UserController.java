@@ -72,7 +72,7 @@ public class UserController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwt = tokenProvider.generateToken(authentication);
-        return new ResponseEntity<LoginSuccessResponse>(new LoginSuccessResponse(true,jwt,user.getRole()),HttpStatus.OK);
+        return new ResponseEntity<LoginSuccessResponse>(new LoginSuccessResponse(true,jwt,user.getRole(),user.getId()),HttpStatus.OK);
     }
 
     @PostMapping("/askquestion/{pid}")
@@ -90,6 +90,14 @@ public class UserController {
         Comment  comment1 = commentService.saveComment(comment);
         return new ResponseEntity<Comment>(comment1,HttpStatus.CREATED);
 
+    }
+
+    @GetMapping("/getDetails/{id}")
+    public ResponseEntity<?> getUserDetails(@PathVariable Long id){
+        String  name = principalService.getCurrentPrincipaUsername();
+        User user = userService.loadUserByUsername(name);
+        if(id != user.getId()) throw new ProductNotFoundException("You are not allowed to preform this action");
+        return new ResponseEntity<User>(user,HttpStatus.OK);
     }
 
 
