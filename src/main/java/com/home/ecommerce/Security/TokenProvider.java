@@ -26,6 +26,7 @@ public class TokenProvider {
 
         String jwt = Jwts.builder().setSubject(email).
                 addClaims(claims).
+                setIssuedAt(new Date(System.currentTimeMillis())).
                 setExpiration(expiryDate).
                 signWith(SignatureAlgorithm.HS512,"SECRET_KEY").
                 compact();

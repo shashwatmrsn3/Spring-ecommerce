@@ -96,6 +96,9 @@ public class UserController {
     public ResponseEntity<?> getUserDetails(@PathVariable Long id){
         String  name = principalService.getCurrentPrincipaUsername();
         User user = userService.loadUserByUsername(name);
+        System.out.println("Sent id: "+id);
+        System.out.println("userid: " + user.getId() );
+        System.out.println("name: "+ name);
         if(id != user.getId()) throw new ProductNotFoundException("You are not allowed to preform this action");
         return new ResponseEntity<User>(user,HttpStatus.OK);
     }
