@@ -1,5 +1,6 @@
 package com.home.ecommerce.Domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.validator.constraints.Range;
 
@@ -21,11 +22,12 @@ public class Rating {
 
     @ManyToOne
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
-
+    @JsonIgnore
     private Product product;
 
     @ManyToOne
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @JsonIgnore
     private User user;
 
     public int getId() {

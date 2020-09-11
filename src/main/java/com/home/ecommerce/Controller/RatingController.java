@@ -34,6 +34,12 @@ public class RatingController {
         if(errorMap!=null) return errorMap;
         Product product = productService.findProductById(pid);
         if(product==null) throw new ProductNotFoundException("The requested product was not found");
+        try{
+            principalService.getCurrentPrincipal();
+
+        }catch(Exception e){
+            throw new ProductNotFoundException("You must be logged in to revew");
+        }
         User user = principalService.getCurrentPrincipal();
         List<Orders> orders = user.getOrders();
         for(int i=0;i<orders.size();i++){
@@ -50,7 +56,7 @@ public class RatingController {
                         isProductReceived = true;
                         System.out.println(orders.get(i).getStatus());
                     }
-                    }
+                }
                 System.out.println(isProductReceived);
             }
         }
@@ -59,5 +65,6 @@ public class RatingController {
         rating.setUser(user);
         Rating savedRating = ratingService.giveRating(rating);
         return new ResponseEntity<Rating>(savedRating, HttpStatus.OK);
+
     }
 }

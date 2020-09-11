@@ -34,7 +34,7 @@ public class Product {
     @OneToMany
     private List<Comment> comments;
 
-    @JsonIgnore
+
     @OneToMany(mappedBy = "product")
     private List<Rating> rating;
 
